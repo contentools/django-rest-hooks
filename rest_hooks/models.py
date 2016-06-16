@@ -90,6 +90,12 @@ class Hook(models.Model):
         By default it serializes to JSON and POSTs.
         """
         payload = payload_override or self.serialize_hook(instance)
+        """
+        Tweak for when the payload is none no action is taken
+        Needs refactoring: filter hooks by a subset of users
+	"""
+        if payload is None:
+            return None
         if getattr(settings, 'HOOK_DELIVERER', None):
             deliverer = get_module(settings.HOOK_DELIVERER)
             deliverer(self.target, payload, instance=instance, hook=self)
